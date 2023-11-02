@@ -9,60 +9,73 @@ import (
 )
 
 func GetPosts(c *gin.Context) {
-	posts, postsErr := blogsdb.GetPostsFromDB()
-	if postsErr != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we have problem in our server server while fetching posts",
-			"error":   postsErr.Error(),
-		})
-		return
-	}
-	if len(posts) == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  http.NotFound,
-			"message": "Sorry! we don't have any posts",
-		})
-		return
-	}
+    posts, postsErr := blogsdb.GetPostsFromDB()
+    if postsErr != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "status":  http.StatusInternalServerError,
+            "message": "Sorry! We encountered a problem while fetching posts",
+            "error":   postsErr.Error(),
+        })
+        return
+    }
+    if len(posts) == 0 {
+        c.JSON(http.StatusNotFound, gin.H{
+            "status":  http.StatusNotFound,
+            "message": "Sorry! We don't have any posts",
+        })
+        return
+    }
 
-	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "posts are getting successfully",
-		"data":    posts,
-	})
+    c.JSON(http.StatusOK, gin.H{
+        "status":  http.StatusOK,
+        "message": "Posts retrieved successfully",
+        "data":    posts,
+    })
 }
+
 
 func GetPost(c *gin.Context) {
 	id := c.Request.FormValue("id")
-	intId, _ := strconv.Atoi(id)
-	if id == "" {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  http.NoBody,
-			"message": "Please give valide input",
+	intId, err := strconv.Atoi(id)
+
+	if err != nil || intId <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Please provide a valid input",
 		})
 		return
 	}
-	post, postErr := blogsdb.GetPostByIdDFromDB(intId)
 
+	validateId := blogsdb.ValidatePostId(intId)
+	if !validateId {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Sorry! This ID is not present in our database",
+		})
+		return
+	}
+
+	post, postErr := blogsdb.GetPostByIdDFromDB(intId)
 	if postErr != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we have problem in our server server while fetching your post",
+			"message": "Sorry! We encountered a problem while fetching your post",
 			"error":   postErr.Error(),
 		})
 		return
 	}
+
 	if post.ID == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  http.NotFound,
-			"message": "Sorry! this id don't have any posts",
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Sorry! This ID does not have any posts",
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "post are getting successfully",
+		"message": "Post retrieved successfully",
 		"data":    post,
 	})
 }
@@ -104,6 +117,14 @@ func UpdatePost(c *gin.Context) {
 	author := c.Request.FormValue("author")
 	id := c.Request.FormValue("id")
 	intId, _ := strconv.Atoi(id)
+	validateId := blogsdb.ValidatePostId(intId)
+	if !validateId {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  http.NotFound,
+			"message": "Sorry! this id is not present in our database",
+		})
+		return
+	}
 	updatePost, updatePostErr := blogsdb.UpdatePost(intId, title, content, author)
 	if updatePostErr != nil || !updatePost {
 		c.JSON(http.StatusOK, gin.H{
@@ -133,18 +154,38 @@ func UpdatePost(c *gin.Context) {
 
 func DeletePost(c *gin.Context) {
 	id := c.Request.FormValue("id")
-	intId, _ := strconv.Atoi(id)
+
+	intId, err := strconv.Atoi(id)
+
+	if err != nil || intId <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Please provide a valid input",
+		})
+		return
+	}
+
+	validateId := blogsdb.ValidatePostId(intId)
+	if !validateId {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Sorry! This ID is not present in our database",
+		})
+		return
+	}
+
 	deletePost, deletePostErr := blogsdb.DeletePost(intId)
 	if deletePostErr != nil || !deletePost {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we have problem in our server while deleting this post",
+			"message": "Sorry! We encountered a problem while deleting this post",
 			"error":   deletePostErr.Error(),
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "post are deleted successfully",
+		"message": "Post deleted successfully",
 	})
 }

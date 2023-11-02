@@ -73,3 +73,11 @@ func DeletePost(id int) (bool, error) {
 	}
 	return true, nil
 }
+func ValidatePostId(id int) bool {
+	var isHave bool
+	if err := mysqldb.DB.QueryRow("SELECT TRUE FROM posts WHERE id = ?", id).Scan(&isHave); err != nil {
+		log.Println("ValidatePostId err: ", err.Error())
+		return isHave
+	}
+	return isHave
+}
