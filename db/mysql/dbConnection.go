@@ -2,6 +2,7 @@ package mysqldb
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/Rajendro1/AntinoGoLang/config"
@@ -18,11 +19,12 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer DB.Close()
+	dbMigration()
 	DB.SetMaxOpenConns(10)
 
 }
 func dbMigration() {
+	fmt.Println(DbAndTableCreation)
 	if _, err := DB.Exec(DbAndTableCreation); err != nil {
 		log.Println("dbMigration err: ", err.Error())
 	}

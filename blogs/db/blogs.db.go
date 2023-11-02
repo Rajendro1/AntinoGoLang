@@ -10,7 +10,7 @@ import (
 
 func GetPostByIdDFromDB(id int) (blogs.Post, error) {
 	var post blogs.Post
-	if rowErr := mysqldb.DB.QueryRow("SELECT * FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt, &post.UpdatedAt); rowErr != nil {
+	if rowErr := mysqldb.DB.QueryRow("SELECT id, title, content, author, created_at, updated_at FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt, &post.UpdatedAt); rowErr != nil {
 		if rowErr == sql.ErrNoRows {
 			return post, nil
 		}
