@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches: 
+      - main
+env:
+  IMAGE_REGISTRY: ghcr.io
+  REGISTRY_USER: Rajendro1
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3 
+
+    - name: Login to GitHub Container Registry
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ env.REGISTRY_USER }}
+        password: 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
+
+    - name: Build the Podman image
+      run: |
+        podman build . --tag ghcr.io/rajendro1/wbs-$(basename ${{ github.ref }}):$(basename ${{ github.ref }}) -f Dockerfile
+        podman push ghcr.io/rajendro1/wbs-$(basename ${{ github.ref }}):$(basename ${{ github.ref }})

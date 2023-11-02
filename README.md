@@ -5,15 +5,47 @@
 
 This API allows you to perform CRUD operations on blog posts.
 
-## Base URL
+Certainly! Below is an updated README documentation that includes the steps to start the server using Docker Compose:
 
-The base URL for the API is:
+---
 
-```
-http://<your-server-address>:<port>
-```
+# Blogging Platform API
 
-Replace `http://localhost:8080` and `8080` with your server's IP address and the port you are running your Gin application on.
+This API allows you to perform CRUD operations on blog posts.
+
+## Setup and Running the API
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your machine.
+
+### Steps to Start the Server
+
+1. **Create `.env` File:**  
+   Create an `.env` file in the root of the project and add the following content:
+
+    ```env
+    DB_HOST=db
+    DB_USER=root
+    DB_PASSWORD=my-secret-pw
+    DB_NAME=mydb
+    ```
+
+2. **Build and Run with Docker Compose:**  
+   Navigate to the project directory and run the following command:
+
+    ```sh
+    sudo docker-compose up --build
+    ```
+
+   This command will build your Go application and MySQL as Docker containers and start them.
+
+3. **Access the API:**  
+   The API will be accessible at:
+
+    ```
+    http://localhost:8080
+    ```
 
 ## API Endpoints
 

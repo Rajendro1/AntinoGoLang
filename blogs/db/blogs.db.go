@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/Rajendro1/AntinoGoLang/blogs"
+	blogsStruct "github.com/Rajendro1/AntinoGoLang/blogs"
 	mysqldb "github.com/Rajendro1/AntinoGoLang/db/mysql"
 )
 
-func GetPostByIdDFromDB(id int) (blogs.Post, error) {
-	var post blogs.Post
+func GetPostByIdDFromDB(id int) (blogsStruct.Post, error) {
+	var post blogsStruct.Post
 	if rowErr := mysqldb.DB.QueryRow("SELECT id, title, content, author, created_at, updated_at FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt, &post.UpdatedAt); rowErr != nil {
 		if rowErr == sql.ErrNoRows {
 			return post, nil
@@ -35,9 +35,9 @@ func CreatePostToDB(title, content, author string) (int, error) {
 
 	return int(lastId), nil
 }
-func GetPostsFromDB() ([]blogs.Post, error) {
-	var post blogs.Post
-	var posts []blogs.Post
+func GetPostsFromDB() ([]blogsStruct.Post, error) {
+	var post blogsStruct.Post
+	var posts []blogsStruct.Post
 
 	rows, rowsErr := mysqldb.DB.Query("SELECT * FROM posts")
 	if rowsErr != nil {

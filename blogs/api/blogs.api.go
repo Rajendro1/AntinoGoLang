@@ -2,43 +2,51 @@ package blogsapi
 
 import (
 	"net/http"
-	"strconv"
 
+	blogsStruct "github.com/Rajendro1/AntinoGoLang/blogs"
 	blogsdb "github.com/Rajendro1/AntinoGoLang/blogs/db"
 	"github.com/gin-gonic/gin"
 )
 
 func GetPosts(c *gin.Context) {
-    posts, postsErr := blogsdb.GetPostsFromDB()
-    if postsErr != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{
-            "status":  http.StatusInternalServerError,
-            "message": "Sorry! We encountered a problem while fetching posts",
-            "error":   postsErr.Error(),
-        })
-        return
-    }
-    if len(posts) == 0 {
-        c.JSON(http.StatusNotFound, gin.H{
-            "status":  http.StatusNotFound,
-            "message": "Sorry! We don't have any posts",
-        })
-        return
-    }
+	posts, postsErr := blogsdb.GetPostsFromDB()
+	if postsErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "Sorry! We encountered a problem while fetching posts",
+			"error":   postsErr.Error(),
+		})
+		return
+	}
+	if len(posts) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Sorry! We don't have any posts",
+		})
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{
-        "status":  http.StatusOK,
-        "message": "Posts retrieved successfully",
-        "data":    posts,
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Posts retrieved successfully",
+		"data":    posts,
+	})
 }
 
-
 func GetPost(c *gin.Context) {
-	id := c.Request.FormValue("id")
-	intId, err := strconv.Atoi(id)
+	var input blogsStruct.Input
 
-	if err != nil || intId <= 0 {
+	// Bind JSON body to Post struct
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request format",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	if input.ID <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
 			"message": "Please provide a valid input",
@@ -46,7 +54,7 @@ func GetPost(c *gin.Context) {
 		return
 	}
 
-	validateId := blogsdb.ValidatePostId(intId)
+	validateId := blogsdb.ValidatePostId(input.ID)
 	if !validateId {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  http.StatusNotFound,
@@ -55,7 +63,7 @@ func GetPost(c *gin.Context) {
 		return
 	}
 
-	post, postErr := blogsdb.GetPostByIdDFromDB(intId)
+	post, postErr := blogsdb.GetPostByIdDFromDB(input.ID)
 	if postErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -81,83 +89,110 @@ func GetPost(c *gin.Context) {
 }
 
 func CreatePost(c *gin.Context) {
-	title := c.Request.FormValue("title")
-	content := c.Request.FormValue("content")
-	author := c.Request.FormValue("author")
+	var newPost blogsStruct.Input
+	if err := c.ShouldBindJSON(&newPost); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
+			"error":   err.Error(),
+		})
+		return
+	}
 
-	createPostID, createPostErr := blogsdb.CreatePostToDB(title, content, author)
+	createPostID, createPostErr := blogsdb.CreatePostToDB(newPost.Title, newPost.Content, newPost.Author)
 	if createPostErr != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we could add your post",
+			"message": "Sorry! We couldn't add your post",
 			"error":   createPostErr.Error(),
 		})
 		return
 	}
+
 	getPost, getPostErr := blogsdb.GetPostByIdDFromDB(createPostID)
 	if getPostErr != nil {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we have problem in our server while fetching your post",
+			"message": "Sorry! We encountered a problem while fetching your post",
 			"error":   getPostErr.Error(),
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "post are getting successfully",
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  http.StatusCreated,
+		"message": "Post created successfully",
 		"data":    getPost,
 	})
-
 }
 
 func UpdatePost(c *gin.Context) {
-	title := c.Request.FormValue("title")
-	content := c.Request.FormValue("content")
-	author := c.Request.FormValue("author")
-	id := c.Request.FormValue("id")
-	intId, _ := strconv.Atoi(id)
-	validateId := blogsdb.ValidatePostId(intId)
+	var input blogsStruct.Input
+
+	// Bind JSON body to Post struct
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request format",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	// Validate the post ID
+	validateId := blogsdb.ValidatePostId(input.ID)
 	if !validateId {
 		c.JSON(http.StatusOK, gin.H{
-			"status":  http.NotFound,
+			"status":  http.StatusNotFound,
 			"message": "Sorry! this id is not present in our database",
 		})
 		return
 	}
-	updatePost, updatePostErr := blogsdb.UpdatePost(intId, title, content, author)
+
+	// Attempt to update the post
+	updatePost, updatePostErr := blogsdb.UpdatePost(input.ID, input.Title, input.Content, input.Author)
 	if updatePostErr != nil || !updatePost {
 		c.JSON(http.StatusOK, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "Sorry! we have problem in our server while updating this post",
+			"message": "Sorry! we have a problem in our server while updating this post",
 			"error":   updatePostErr.Error(),
 		})
 		return
 	}
-	if updatePost {
-		getPost, getPostErr := blogsdb.GetPostByIdDFromDB(intId)
-		if getPostErr != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"status":  http.StatusInternalServerError,
-				"message": "Sorry! we have problem in our server while fetching your post",
-				"error":   getPostErr.Error(),
-			})
-			return
-		}
+
+	// Retrieve the updated post
+	getPost, getPostErr := blogsdb.GetPostByIdDFromDB(input.ID)
+	if getPostErr != nil {
 		c.JSON(http.StatusOK, gin.H{
-			"status":  http.StatusOK,
-			"message": "post are updated successfully",
-			"data":    getPost,
+			"status":  http.StatusInternalServerError,
+			"message": "Sorry! we have a problem in our server while fetching your post",
+			"error":   getPostErr.Error(),
 		})
+		return
 	}
+
+	// Respond with the updated post
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Post updated successfully",
+		"data":    getPost,
+	})
 }
 
 func DeletePost(c *gin.Context) {
-	id := c.Request.FormValue("id")
+	var input blogsStruct.Input
 
-	intId, err := strconv.Atoi(id)
+	// Bind JSON body to Post struct
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request format",
+			"error":   err.Error(),
+		})
+		return
+	}
 
-	if err != nil || intId <= 0 {
+	if input.ID <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
 			"message": "Please provide a valid input",
@@ -165,7 +200,7 @@ func DeletePost(c *gin.Context) {
 		return
 	}
 
-	validateId := blogsdb.ValidatePostId(intId)
+	validateId := blogsdb.ValidatePostId(input.ID)
 	if !validateId {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status":  http.StatusNotFound,
@@ -174,7 +209,7 @@ func DeletePost(c *gin.Context) {
 		return
 	}
 
-	deletePost, deletePostErr := blogsdb.DeletePost(intId)
+	deletePost, deletePostErr := blogsdb.DeletePost(input.ID)
 	if deletePostErr != nil || !deletePost {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,

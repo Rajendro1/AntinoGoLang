@@ -12,8 +12,17 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"CreatePost\",\n    \"content\": \"New Post Will Come\",\n    \"author\": \"Rajendro Sau\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/post?title=NewTitle3&content=NewContent3&author=Rajendro3",
+					"raw": "http://localhost:8080/post",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -21,20 +30,6 @@
 					"port": "8080",
 					"path": [
 						"post"
-					],
-					"query": [
-						{
-							"key": "title",
-							"value": "NewTitle3"
-						},
-						{
-							"key": "content",
-							"value": "NewContent3"
-						},
-						{
-							"key": "author",
-							"value": "Rajendro3"
-						}
 					]
 				}
 			},
@@ -42,9 +37,21 @@
 		},
 		{
 			"name": "Get all posts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:8080/posts",
 					"protocol": "http",
@@ -61,11 +68,23 @@
 		},
 		{
 			"name": "Get post by id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/post?id=2",
+					"raw": "http://localhost:8080/post",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -73,12 +92,6 @@
 					"port": "8080",
 					"path": [
 						"post"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "2"
-						}
 					]
 				}
 			},
@@ -89,8 +102,17 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"title\": \"NewTitle2\",\n    \"content\": \"NewContent2\",\n    \"author\": \"Rajendro2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/post?id=2&title=NewTitle10&content=NewContent10&author=Rajendro10",
+					"raw": "http://localhost:8080/post",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -98,24 +120,6 @@
 					"port": "8080",
 					"path": [
 						"post"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "2"
-						},
-						{
-							"key": "title",
-							"value": "NewTitle10"
-						},
-						{
-							"key": "content",
-							"value": "NewContent10"
-						},
-						{
-							"key": "author",
-							"value": "Rajendro10"
-						}
 					]
 				}
 			},
@@ -126,8 +130,17 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/post?id=2",
+					"raw": "http://localhost:8080/post",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -135,12 +148,6 @@
 					"port": "8080",
 					"path": [
 						"post"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "2"
-						}
 					]
 				}
 			},
