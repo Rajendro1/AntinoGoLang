@@ -21,7 +21,7 @@ jobs:
       with:
         registry: ${{ env.IMAGE_REGISTRY }}
         username: ${{ env.REGISTRY_USER }}
-        password: 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
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - name: Build the Podman image
       run: |
