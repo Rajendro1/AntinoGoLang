@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "73ea8650-e9f8-4963-a7ad-37b0f7edaf85",
+		"name": "AntinoGoLangRest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24991346",
+		"_collection_link": "https://flexablellc.postman.co/workspace/Team-Workspace~ce092635-dc19-4dd1-83d0-1d91957842ef/collection/24991346-73ea8650-e9f8-4963-a7ad-37b0f7edaf85?action=share&source=collection_link&creator=24991346"
+	},
+	"item": [
+		{
+			"name": "Create Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/post?title=NewTitle3&content=NewContent3&author=Rajendro3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"post"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "NewTitle3"
+						},
+						{
+							"key": "content",
+							"value": "NewContent3"
+						},
+						{
+							"key": "author",
+							"value": "Rajendro3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get post by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/post?id=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"post"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdatePost",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/post?id=2&title=NewTitle10&content=NewContent10&author=Rajendro10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"post"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						},
+						{
+							"key": "title",
+							"value": "NewTitle10"
+						},
+						{
+							"key": "content",
+							"value": "NewContent10"
+						},
+						{
+							"key": "author",
+							"value": "Rajendro10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/post?id=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"post"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
