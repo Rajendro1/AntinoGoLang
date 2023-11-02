@@ -25,10 +25,10 @@ This API allows you to perform CRUD operations on blog posts.
    Create an `.env` file in the root of the project and add the following content:
 
     ```env
-    DB_HOST=db
-    DB_USER=root
-    DB_PASSWORD=my-secret-pw
-    DB_NAME=mydb
+        DB_PASSWORD="rajendro1"
+        DB_USERNAME=root
+        DB_HOST=localhost
+        DB_PORT=31347
     ```
 
 2. **Build and Run with Docker Compose:**  
@@ -39,6 +39,11 @@ This API allows you to perform CRUD operations on blog posts.
     ```
 
    This command will build your Go application and MySQL as Docker containers and start them.
+
+    open new terminal and run go code
+   ```
+    go run main.go
+   ```
 
 3. **Access the API:**  
    The API will be accessible at:

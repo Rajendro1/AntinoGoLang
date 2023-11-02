@@ -25,5 +25,5 @@ jobs:
 
     - name: Build the Podman image
       run: |
-        podman build . --tag ghcr.io/rajendro1/wbs-$(basename ${{ github.ref }}):$(basename ${{ github.ref }}) -f Dockerfile
-        podman push ghcr.io/rajendro1/wbs-$(basename ${{ github.ref }}):$(basename ${{ github.ref }})
+        podman build . --tag ghcr.io/rajendro1/antino-go-$(basename ${{ github.ref }}):$(basename ${{ github.ref }}) -f Dockerfile
+        podman push ghcr.io/rajendro1/antino-go-$(basename ${{ github.ref }}):$(basename ${{ github.ref }})
