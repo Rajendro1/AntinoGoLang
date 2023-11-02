@@ -2,9 +2,12 @@ package mysqldb
 
 import "github.com/Rajendro1/AntinoGoLang/config"
 
-var DbAndTableCreation = `
+var DbCreationQuery = `
 CREATE DATABASE ` + config.DB_NAME + `;
-USE ` + config.DB_NAME + `;
+
+`
+
+var TableCreation = `
 
 CREATE TABLE posts (
     id INT AUTO_INCREMENT PRIMARY KEY,
